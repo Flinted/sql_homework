@@ -66,12 +66,18 @@ Using the SQL Database file given to you as the source of data to answer the que
       SELECT SUM(price) FROM "shows" WHERE price < 20.00;
 
   14. Select the name and price of the most expensive show.
+      SELECT "name", "price" FROM "shows" WHERE "price" IN (SELECT MAX("price") FROM "shows");
 
   15. Select the name and price of the second from cheapest show.
+      SELECT "name", "price" FROM "shows" 
+      WHERE "price" IN (SELECT MIN("price") FROM "shows"
+      WHERE "price" NOT IN (SELECT MIN("price") FROM "shows" )); 
 
   16. Select the names of all users whose names start with the letter "N".
+      SELECT "name" FROM "users" WHERE "name" like 'N%';
 
   17. Select the names of users whose names contain "er".
+      SELECT "name" FROM "users" WHERE "name" like '%er';
 
 
 ## Section 3
@@ -81,7 +87,18 @@ Using the SQL Database file given to you as the source of data to answer the que
   18. Select the time for the Edinburgh Royal Tattoo.
 
   19. Select the number of users who want to see "Shitfaced Shakespeare".
+      SELECT COUNT(*) FROM "shows" INNER JOIN "shows_users" ON  shows_users.show_id = shows.id WHERE show_id = 2;
 
   20. Select all of the user names and the count of shows they're going to see.
+      SELECT users, COUNT(shows) FROM shows_users
+      INNER JOIN users ON users.id = shows_users.user_id
+      INNER JOIN shows ON shows.id = shows_users.show_id
+      GROUP BY users;
+
 
   21. SELECT all users who are going to a show at 17:15.
+
+      SELECT users.name FROM shows_users
+      INNER JOIN users ON users.id = shows_users.user_id
+      INNER JOIN times ON times.show_id = shows_users.show_id 
+      WHERE times.time = '17:15';
